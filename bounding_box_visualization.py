@@ -3,12 +3,12 @@ import cv2
 import matplotlib.pyplot as plt
 
 # Beispiel: Team und Dateiname
-team = 'ulm'
+team = 'amz'
 img_dir = f'Dataset/fsoco_bounding_boxes_train/{team}/img'
 label_dir = f'Dataset/fsoco_bounding_boxes_train/{team}/labels'
 
 # Beispiel-Datei
-img_filename = 'amz_02162.png'
+img_filename = 'amz_00100.jpg'
 txt_filename = img_filename.replace('.png', '.txt').replace('.jpg', '.txt')
 
 img_path = os.path.join(img_dir, img_filename)
