@@ -3,6 +3,8 @@ import torch
 from torch.utils.data import Dataset
 from PIL import Image
 import torch.nn as nn
+from torch.utils.data import DataLoader
+import torch.optim as optim
 
 class YoloDataset(Dataset):
     def __init__(self, img_dir, label_dir, transform=None):
@@ -19,7 +21,7 @@ class YoloDataset(Dataset):
         img_path = os.path.join(self.img_dir, img_name)
         label_path = os.path.join(self.label_dir, img_name.replace('.jpg', '.txt').replace('.png', '.txt'))
         image = Image.open(img_path).convert("RGB")
-    boxes = []
+        boxes = []
         with open(label_path) as f:
             for line in f:
                 class_id, x_center, y_center, width, height = map(float, line.strip().split())
@@ -50,3 +52,37 @@ class YoloNano(nn.Module):
         x = self.features(x)
         x = self.head(x)
         return x
+
+# Annahme: 2 Klassen, passe ggf. an!
+num_classes = 2
+
+# Dataset laden
+train_dataset = YoloDataset(
+    img_dir="Dataset/fsoco_bounding_boxes_train/amz/img",
+    label_dir="Dataset/fsoco_bounding_boxes_train/amz/labels"
+    # img_dir="Dataset_split/test/img",
+    # label_dir="Dataset_split/test/labels"
+)
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+
+# Modell
+model = YoloNano(num_classes=num_classes)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
+# Loss und Optimizer (Dummy-Loss, für echtes Training YOLO-Loss verwenden!)
+criterion = torch.nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+# Training
+for epoch in range(10):
+    model.train()
+    for images, targets in train_loader:
+        images = images.to(device)
+        targets = targets.to(device)
+        outputs = model(images)
+        loss = criterion(outputs, targets.view(outputs.shape))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    print(f"Epoch {epoch+1}, Loss: {loss.item()}")

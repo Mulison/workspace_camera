@@ -13,6 +13,7 @@
 
 #### Frage
 * Die Eingangsbild haben verschiedene Groß
+** Lösung: entweder gleiche Groß machen, oder train nur mit den gleichgroßen Bilder
 * wie viele Layer braucht man?
 * welche Layer braucht man? (full connected, flatten)
 * welche Kern?
