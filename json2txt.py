@@ -7,13 +7,17 @@ root_dir = 'Dataset/fsoco_bounding_boxes_train'
 for team in os.listdir(root_dir):
     team_path = os.path.join(root_dir, team)
     ann_path = os.path.join(team_path, 'ann')
+    out_path = os.path.join(team_path, 'labels')
     if os.path.isdir(ann_path):
+        os.makedirs(out_path, exist_ok=True)
         for json_file in glob.glob(os.path.join(ann_path, '*.json')):
             # Hier deine bisherige Verarbeitung für jede JSON-Datei
             print(f"Verarbeite: {json_file}")
             json_path = json_file.replace('\\', '/')
-            txt_filename = json_file.replace('.png.json', '.txt').replace('.jpg.json', '.txt')
-            txt_path = os.path.join(ann_path, txt_filename)
+            # Dateiname extrahieren
+            base_filename = os.path.basename(json_file)
+            txt_filename = base_filename.replace('.png.json', '.txt').replace('.jpg.json', '.txt')
+            txt_path = os.path.join(out_path, txt_filename)
             txt_path = txt_path.replace('\\', '/')
 
             with open(json_path, 'r') as f:
